@@ -1,0 +1,33 @@
+[package]
+name = "dvil"
+version = "0.1.0"
+authors = ["fromtheeast710 <theeast710@proton.me>"]
+edition = "2021"
+
+[dependencies]
+clap = "4.5.41"
+dioxus = { version = "0.6.0", features = ["router"] }
+nucleo = "0.5.0"
+tree-sitter = "0.25.6"
+tree-sitter-rust = "0.24.0"
+# steel-core = { git = "https://github.com/mattwparas/steel", version = "0.7.0", features = [
+#   "anyhow",
+# ] }
+
+[features]
+default = ["desktop"]
+web = ["dioxus/web"]
+desktop = ["dioxus/desktop"]
+mobile = ["dioxus/mobile"]
+
+[profile]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"

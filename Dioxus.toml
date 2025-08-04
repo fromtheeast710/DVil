@@ -1,0 +1,24 @@
+[application]
+
+[web.app]
+
+# HTML title tag content
+title = "dvil"
+
+# include `assets` in web platform
+[web.resource]
+base_path = "/"
+asset_dir = "assets"
+watch_path = ["src", "assets"]
+
+# Additional CSS style files
+style = []
+
+# Additional JavaScript files
+script = []
+
+[web.resource.dev]
+
+# Javascript code file
+# serve: [dev-server] only
+script = []

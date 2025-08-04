@@ -1,0 +1,33 @@
+// BUG: return error 404
+/* @font-face {
+  font-family: 'FiraCodeMonoRegular';
+  src: url('/assets/fonts/FiraCodeNerdFontMonoRegular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+} */
+
+// HACK: need root so * apply
+:root { }
+
+* {
+  font-size: 20px;
+  /* font-family: nerdfont; */
+  /* font-family: FiraCodeMonoRegular; */
+}
+
+body {
+  background-color: #0f1116;
+  color: #ffffff;
+  margin: 0;
+}
+
+textarea {
+  background-color: #0f1116;
+  color: #ffffff;
+  border: none;
+  resize: none;
+  outline: none;
+  overflow: hidden;
+  padding: 0px 30px 0px 0px;
+  flex: 1;
+}
