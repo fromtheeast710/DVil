@@ -1,17 +1,13 @@
-use dioxus::prelude::*;
+use dioxus::{
+  desktop::{Config, WindowBuilder},
+  prelude::*,
+};
 use std::{error::Error, fs};
-use tree_sitter::{Parser, TreeCursor};
+// use tree_sitter::{Parser, TreeCursor};
 
-use crate::ui::{bar::Bar, editor::Editor, float::Float, home::Home, welcome::Welcome};
+use crate::ui::{bar::Bar, editor::editor::Editor, home::Home, welcome::Welcome};
 
-mod ui {
-  pub mod bar;
-  pub mod cursor;
-  pub mod editor;
-  pub mod float;
-  pub mod home;
-  pub mod welcome;
-}
+mod ui;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 enum Route {
@@ -29,23 +25,25 @@ const MAIN_CSS: Asset = asset!("/assets/main.css");
 const FONT_FIRA_CODE: Asset = asset!("/assets/fonts/FiraCodeNerdFontMonoRegular.ttf");
 
 fn main() -> Result<(), Box<dyn Error>> {
-  dioxus::launch(App);
+  dioxus::LaunchBuilder::new()
+    .with_cfg(
+      Config::default()
+        // .with_menu(None)
+        .with_disable_context_menu(true)
+        .with_window(WindowBuilder::new().with_maximized(true).with_title("dvil")),
+    )
+    .launch(App);
 
   Ok(())
 }
 
 #[component]
 fn App() -> Element {
-  let mut parser = Parser::new();
-  let language = tree_sitter_rust::LANGUAGE;
-  parser.set_language(&language.into()).expect("Error loading rust parser");
-
   let source = "src/main.rs";
   let file = match fs::read_to_string(&source) {
     Ok(file) => file,
     Err(_) => "Failed to open file!".to_string(),
   };
-  let _tree = parser.parse(&file, None).unwrap();
 
   // HACK: load font using only css?
   let fira = format!(
@@ -60,13 +58,15 @@ fn App() -> Element {
   );
 
   rsx! {
-     document::Link { rel: "icon", href: FAVICON }
-     document::Link { rel: "stylesheet", href: MAIN_CSS }
+    document::Link { rel: "icon", href: FAVICON }
+    document::Link { rel: "stylesheet", href: MAIN_CSS }
 
-     style { "{fira}" }
+    style { "{fira}" }
 
-     Editor { file: file, font: FONT_FIRA_CODE }
+    Editor { file: file, font: FONT_FIRA_CODE }
 
-     Router::<Route> {}
+    // Float { }
+
+    Router::<Route> { }
   }
 }

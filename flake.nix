@@ -11,6 +11,8 @@
         ];
       };
 
+      nrsk = pkgs.callPackage naersk {};
+
       rust = pkgs.rust-bin.stable.latest.minimal.override {
         extensions = ["rust-src"];
       };
@@ -48,6 +50,7 @@
       with pkgs; {
         packages.${system} = {
           dvil = callPackage builder {};
+          # default = nrsk.buildPackage {};
           default = self.packages.${system}.dvil;
         };
 
@@ -57,11 +60,8 @@
             rust-analyzer-unwrapped
             rust-bin.nightly."2024-04-07".rustfmt
             dioxus-cli
-            nixgl.nixGLMesa
-            topiary
-            # steel
-            # dhall
             nickel
+            nixgl.nixGLMesa
           ];
 
           buildInputs = [
@@ -86,6 +86,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixgl.url = "github:nix-community/nixGL";
+    naersk.url = "github:nix-community/naersk";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 }
