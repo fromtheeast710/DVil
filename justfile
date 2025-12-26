@@ -1,36 +1,20 @@
+default:
+  # cargo check
+  nickel export config/init.ncl > config/init.json
+  watchexec -r -e rs,toml -- just r
+
 # start dev window
-dev:
-  #! /bin/bash
-  nixGLMesa dx serve --platform desktop
-  # pnpx tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --watch
+r:
+  nixGLMesa cargo run --features iced/time-travel
 
-# cargo build release binary
-db:
-  dx bundle
+# release build
+b:
+  cargo build --release
 
-# remove the target dir
-dc:
-  dx clean
-
-# format rsx files
-df:
-  dx fmt
-
-# nix build release derivative
-nb:
-  nix build --log-format internal-json |& nom --json
-
-# nix update flake.lock
-nu:
-  nix flake update
-
-# nix check flake
-nc:
-  nix flake check
-
-# nix show flake's info
-ns:
-  nix flake show
+# re-eval config file
+c:
+  nickel export config/init.ncl > config/init.json
+  # bat config/init.json
 
 # reload environment
 d:

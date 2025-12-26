@@ -1,33 +1,27 @@
 [package]
-name = "dvil"
+name = "DVil"
 version = "0.1.0"
-authors = ["fromtheeast710 <theeast710@proton.me>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-clap = "4.5.41"
-dioxus = { version = "0.6.0", features = ["router"] }
-nucleo = "0.5.0"
-serde_json = "1.0.143"
-tree-sitter = "0.25.6"
-tree-sitter-rust = "0.24.0"
+clap = "4.5.53"
+crop = { version = "0.4.3", features = ["simd", "unicode-segmentation"] }
+git-status-vars = "1.3.0"
+iced = { version = "0.14.0", features = ["canvas", "debug", "svg"] }
+iced_core = "0.14.0"
+# polodb_core = "5.1.4"
+rstest = "0.26.1"
+serde = "1.0.228"
+serde_json = "1.0.147"
+size = "0.5.0"
+# lsp-types = { git = "https://github.com/zed-industries/lsp-types", version = "0.97.0" }
+# nucleo-matcher = "0.3.1"
+# thiserror = "2.0.17"
+# tree-sitter = "0.25.10"
+# tree-sitter-rust = "0.24.0"
 
-[dependencies.web-sys]
-version = "0.3"
-features = ["HtmlDialogElement"]
-
-[features]
-default = ["desktop"]
-web = ["dioxus/web"]
-desktop = ["dioxus/desktop"]
-mobile = ["dioxus/mobile"]
-
-[profile.wasm-dev]
-inherits = "dev"
-opt-level = 1
-
-[profile.server-dev]
-inherits = "dev"
-
-[profile.android-dev]
-inherits = "dev"
+[profile.release]
+# codegen-units = 1
+opt-level = "z" # NOTE: "s" may be better
+strip = true
+lto = true

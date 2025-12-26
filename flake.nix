@@ -11,19 +11,32 @@
         ];
       };
 
-      nrsk = pkgs.callPackage naersk {};
+      rust = pkgs.rust-bin.stable.latest.default;
 
-      rust = pkgs.rust-bin.stable.latest.minimal.override {
-        extensions = ["rust-src"];
-      };
+      comet = {
+        lib,
+        fetchgit,
+        rustPlatform,
+      }:
+        rustPlatform.buildRustPackage {
+          pname = "comet";
+          version = "unstable";
+          src = fetchgit {
+            url = "https://github.com/iced-rs/comet";
+            hash = "sha256-54T/v8rOqexV6v5+SEQCpVN3k+ry4DkKrNH+TbUtCSM=";
+          };
+          cargoHash = "sha256-UGCLJwCyLH5/QjvnI/HQtR04cEaenz167e78LtwSzsQ=";
 
+          buildInputs = with pkgs; [
+            openssl
+          ];
+
+          nativeBuildInputs = with pkgs; [pkg-config];
+        };
+
+      # TODO: rewrite
       builder = {
         lib,
-        glib,
-        gtk3,
-        xdotool,
-        webkitgtk_4_1,
-        pkg-config,
         rustPlatform,
       }: let
         toml = (lib.importTOML ./Cargo.toml).package;
@@ -35,14 +48,7 @@
           src = ./.;
           cargoLock.lockFile = ./Cargo.lock;
 
-          buildInputs = [
-            glib
-            gtk3
-            xdotool
-            webkitgtk_4_1
-          ];
-
-          nativeBuildInputs = [pkg-config];
+          nativeBuildInputs = with pkgs; [pkg-config];
 
           meta.mainProgram = "dvil";
         };
@@ -50,35 +56,43 @@
       with pkgs; {
         packages.${system} = {
           dvil = callPackage builder {};
-          # default = nrsk.buildPackage {};
           default = self.packages.${system}.dvil;
         };
 
-        devShells.${system}.default = mkShellNoCC {
+        devShells.${system}.default = mkShellNoCC rec {
           packages = [
             rust
-            rust-analyzer-unwrapped
-            rust-bin.nightly."2024-04-07".rustfmt
-            dioxus-cli
             nickel
+            watchexec
             nixgl.nixGLMesa
+
+            (callPackage comet {})
           ];
 
-          buildInputs = [
-            gtk3
-            xdotool
-            libsoup_3
-          ];
+          buildInputs =
+            [
+              libclang
+              expat
+              fontconfig
+              freetype
+              freetype.dev
+              pkg-config
+              wayland
+              libxkbcommon
+              # libGL
+            ]
+            ++ (with xorg; [
+              libX11
+              libXcursor
+              libXi
+              libXrandr
+            ]);
 
           env = {
-            BROWSER = "firefox";
             RUST_SRC_PATH = "${rust}/lib/rustlib/src/rust/library";
-            PKG_CONFIG_PATH = "${webkitgtk_4_1.dev}/lib/pkgconfig";
-            WEBKIT_DISABLE_DMABUF_RENDERER = 1;
-            LOCALE_ARCHIVE =
-              if system == "x86_64-linux"
-              then "${glibcLocales}/lib/locale/locale-archive"
-              else "";
+            LIBCLANG_PATH = "${libclang.lib}/lib";
+            LD_LIBRARY_PATH =
+              builtins.foldl' (a: b: "${a}:${b}/lib") "${vulkan-loader}/lib" buildInputs;
           };
         };
       };
@@ -86,7 +100,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixgl.url = "github:nix-community/nixGL";
-    naersk.url = "github:nix-community/naersk";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 }

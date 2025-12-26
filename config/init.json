@@ -1,0 +1,21 @@
+{
+  "color_column": {
+    "color": "#aaaaaa",
+    "enable": true,
+    "pos": 80
+  },
+  "font_size": 13,
+  "num_pad": {
+    "left": 50,
+    "right": 15
+  },
+  "theme": {
+    "bg": "#aaa",
+    "fg": "#aaaaaa",
+    "text": {
+      "b": 0,
+      "g": 0,
+      "r": 0
+    }
+  }
+}
